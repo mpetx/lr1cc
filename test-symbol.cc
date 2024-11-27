@@ -58,3 +58,44 @@ TEST(SymbolManager, Fundamental)
 
     EXPECT_EQ(nullptr, manager.get_symbol("y"));
 }
+
+TEST(Symbols, IsNullable)
+{
+    Symbol a { "A", SymbolType::intermediate };
+    Symbol b { "B", SymbolType::intermediate };
+    Symbol c { "C", SymbolType::intermediate };
+
+    a.set_nullable();
+    b.set_nullable();
+
+    EXPECT_TRUE(is_nullable(std::vector { &a, &b }));
+    EXPECT_FALSE(is_nullable(std::vector { &a, &c }));
+}
+
+TEST(Symbols, InsertFirst)
+{
+    Symbol a { "A", SymbolType::intermediate };
+    Symbol b { "B", SymbolType::intermediate };
+    Symbol c { "C", SymbolType::intermediate };
+    
+    Symbol x { "x", SymbolType::terminal };
+    Symbol y { "y", SymbolType::terminal };
+    Symbol z { "z", SymbolType::terminal };
+
+    a.set_nullable();
+    b.set_nullable();
+
+    a.first().emplace(&x);
+    b.first().emplace(&y);
+    c.first().emplace(&y);
+
+    std::set<Symbol *> result_abz;
+    std::set<Symbol *> expect_abz { &x, &y, &z };
+    insert_first(result_abz, std::vector { &a, &b, &z });
+    EXPECT_EQ(expect_abz, result_abz);
+
+    std::set<Symbol *> result_acz;
+    std::set<Symbol *> expect_acz { &x, &y };
+    insert_first(result_acz, std::vector { &a, &c, &z });
+    EXPECT_EQ(expect_acz, result_acz);
+}

@@ -1,11 +1,14 @@
 #ifndef LR1CC_INCLUDE_SYMBOL_HH
 #define LR1CC_INCLUDE_SYMBOL_HH
 
+#include <algorithm>
 #include <functional>
 #include <memory>
+#include <ranges>
 #include <set>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <unordered_map>
 #include <vector>
 
@@ -53,6 +56,14 @@ namespace lr1cc
         
     };
 
+    template <typename R>
+    requires std::ranges::input_range<std::remove_reference_t<R>>
+    bool is_nullable(R &&r);
+
+    template <typename R, typename Set>
+    requires std::ranges::input_range<std::remove_reference_t<R>>
+    void insert_first(Set &, R &&);
+    
     struct StringHash
     {
         using is_transparent = void;
@@ -131,6 +142,30 @@ namespace lr1cc
     inline std::size_t StringHash::operator()(const std::string &s) const
     {
         return std::hash<std::string_view>{}(s);
+    }
+
+    template <typename R>
+    requires std::ranges::input_range<std::remove_reference_t<R>>
+    bool is_nullable(R &&r)
+    {
+        return std::ranges::all_of(r, [](Symbol *s) {
+            return s->is_nullable();
+        });
+    }
+
+    template <typename R, typename Set>
+    requires std::ranges::input_range<std::remove_reference_t<R>>
+    void insert_first(Set &set, R &&r)
+    {
+        for (Symbol *s : r)
+        {
+            set.insert(s->first().cbegin(), s->first().cend());
+
+            if (!s->is_nullable())
+            {
+                break;
+            }
+        }
     }
     
 }
