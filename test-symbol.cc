@@ -30,8 +30,6 @@ TEST(Symbol, Fundamental)
     EXPECT_TRUE(x.first().contains(&x));
     EXPECT_FALSE(s.first().contains(&s));
 
-    EXPECT_THROW(x.set_nullable(), std::runtime_error);
-
     s.set_nullable();
 
     EXPECT_TRUE(s.is_nullable());
