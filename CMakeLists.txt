@@ -20,7 +20,7 @@ find_package(GTest)
 if (GTest_FOUND)
 
   add_executable(test-lr1cc
-    test-symbol.cc test-grammar.cc test-nfa.cc)
+    test-symbol.cc test-grammar.cc test-nfa.cc test-grammar-to-nfa.cc)
 
   target_link_libraries(test-lr1cc
     PRIVATE lr1cc-core GTest::gtest_main)

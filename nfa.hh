@@ -68,10 +68,10 @@ namespace lr1cc
         NFA();
         
         NFA(const NFA &) = delete;
-        NFA(NFA &&) = delete;
+        NFA(NFA &&);
 
         NFA &operator=(const NFA &) = delete;
-        NFA &operator=(NFA &&) = delete;
+        NFA &operator=(NFA &&);
 
         NFAState *start() const;
         void set_start(NFAState *);
@@ -84,6 +84,8 @@ namespace lr1cc
         
     };
 
+    NFA grammar_to_nfa(const Grammar &);
+    
     inline const Acceptance &NFAState::acceptance() const
     {
         return m_acceptance;
