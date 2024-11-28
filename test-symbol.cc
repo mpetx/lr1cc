@@ -72,7 +72,7 @@ TEST(Symbols, IsNullable)
     EXPECT_FALSE(is_nullable(std::vector { &a, &c }));
 }
 
-TEST(Symbols, InsertFirst)
+TEST(Symbols, First)
 {
     Symbol a { "A", SymbolType::intermediate };
     Symbol b { "B", SymbolType::intermediate };
@@ -89,13 +89,11 @@ TEST(Symbols, InsertFirst)
     b.first().emplace(&y);
     c.first().emplace(&y);
 
-    std::set<Symbol *> result_abz;
     std::set<Symbol *> expect_abz { &x, &y, &z };
-    insert_first(result_abz, std::vector { &a, &b, &z });
-    EXPECT_EQ(expect_abz, result_abz);
+    EXPECT_EQ(expect_abz, first(std::vector { &a, &b, &z }));
+    EXPECT_EQ(expect_abz, first(std::vector { &a, &b }, &z));
 
-    std::set<Symbol *> result_acz;
     std::set<Symbol *> expect_acz { &x, &y };
-    insert_first(result_acz, std::vector { &a, &c, &z });
-    EXPECT_EQ(expect_acz, result_acz);
+    EXPECT_EQ(expect_acz, first(std::vector { &a, &c, &z }));
+    EXPECT_EQ(expect_acz, first(std::vector { &a, &c }, &z));
 }

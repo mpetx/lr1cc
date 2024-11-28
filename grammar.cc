@@ -51,7 +51,8 @@ namespace lr1cc
             {
                 auto prev_size = p->lhs->first().size();
 
-                insert_first(p->lhs->first(), p->rhs);
+                auto rhs_first = first(p->rhs);
+                p->lhs->first().insert(rhs_first.cbegin(), rhs_first.cend());
 
                 updated = updated || prev_size != p->lhs->first().size();
             }

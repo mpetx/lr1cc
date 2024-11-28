@@ -170,13 +170,7 @@ namespace lr1cc
 
             if (curr_input->is_intermediate())
             {
-                std::set<Symbol *> rest_rhs_first;
-                insert_first(rest_rhs_first, rest_rhs);
-                
-                if (is_nullable(rest_rhs))
-                {
-                    rest_rhs_first.emplace(follow);
-                }
+                auto rest_rhs_first = first(rest_rhs, follow);
 
                 for (Symbol *to_follow : rest_rhs_first)
                 {

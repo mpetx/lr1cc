@@ -60,9 +60,9 @@ namespace lr1cc
     requires std::ranges::input_range<std::remove_reference_t<R>>
     bool is_nullable(R &&r);
 
-    template <typename R, typename Set>
+    template <typename R>
     requires std::ranges::input_range<std::remove_reference_t<R>>
-    void insert_first(Set &, R &&);
+    std::set<Symbol *> first(R &&, Symbol * = nullptr);
     
     struct StringHash
     {
@@ -153,6 +153,30 @@ namespace lr1cc
         });
     }
 
+    template <typename R>
+    requires std::ranges::input_range<std::remove_reference_t<R>>
+    std::set<Symbol *> first(R &&r, Symbol *sentinel)
+    {
+        std::set<Symbol *> result;
+
+        for (Symbol *s : r)
+        {
+            result.insert(s->first().cbegin(), s->first().cend());
+
+            if (!s->is_nullable())
+            {
+                return result;
+            }
+        }
+
+        if (sentinel != nullptr)
+        {
+            result.emplace(sentinel);
+        }
+
+        return result;
+    }
+    
     template <typename R, typename Set>
     requires std::ranges::input_range<std::remove_reference_t<R>>
     void insert_first(Set &set, R &&r)
