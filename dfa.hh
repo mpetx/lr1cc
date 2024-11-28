@@ -71,9 +71,15 @@ namespace lr1cc
         template <typename R>
         requires std::ranges::input_range<std::remove_reference_t<R>>
         DFAState *create_state(R &&);
+
+        template <typename R>
+        requires std::ranges::input_range<std::remove_reference_t<R>>
+        DFAState *run(R &&) const;
         
     };
-        
+
+    DFA nfa_to_dfa(const NFA &);
+    
     template <typename R>
     requires std::ranges::input_range<std::remove_reference_t<R>>
     bool nfa_states_accept(R &&r)
@@ -157,6 +163,30 @@ namespace lr1cc
         m_states.push_back(std::move(ptr));
 
         return raw_ptr;
+    }
+
+    template <typename R>
+    requires std::ranges::input_range<std::remove_reference_t<R>>
+    DFAState *DFA::run(R &&r) const
+    {
+        auto state = m_start;
+
+        for (Symbol *input : r)
+        {
+            auto iter = state->transitions().find(input);
+
+            if (iter == state->transitions().end())
+            {
+                state = nullptr;
+                break;
+            }
+            else
+            {
+                state = iter->second;
+            }
+        }
+
+        return state;
     }
     
 }
