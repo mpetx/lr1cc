@@ -3,6 +3,7 @@
 #include "grammar.hh"
 #include "nfa.hh"
 #include "dfa.hh"
+#include "conflict.hh"
 #include "input.hh"
 #include "output.hh"
 
@@ -16,6 +17,82 @@
 static void print_help()
 {
     std::cerr << "usage: lr1cc [-o outfile] [-h] infile" << std::endl;
+}
+
+static void output_conflict_point(const std::vector<lr1cc::Symbol *> &symbols, std::string_view point)
+{
+    for (std::size_t i = 0; i < symbols.size() - 1; ++i)
+    {
+        std::cerr << symbols[i]->name() << ' ';
+    }
+
+    std::cerr << point << ' ';
+
+    std::cerr << symbols[symbols.size() - 1]->name();
+}
+
+static void output_actions(lr1cc::DFAState *state)
+{
+    if (state->accepts())
+    {
+        std::cerr << " *ACCEPT*";
+    }
+
+    for (lr1cc::Production *p : state->reductions())
+    {
+        std::cerr << ' ' << p->name;
+    }
+}
+
+static void report_sr_conflict(const lr1cc::Conflict &conflict)
+{
+    output_conflict_point(conflict.start_to_first, "[1]");
+
+    std::cerr << ' ';
+        
+    output_conflict_point(conflict.first_to_second, "[2]");
+
+    std::cerr << '\n';
+
+    std::cerr << "[1]:";
+    output_actions(conflict.first_state);
+    
+    std::cerr << "\n[2]:";
+    output_actions(conflict.second_state);
+
+    std::cerr << "\n\n";
+}
+
+static void report_rr_conflict(const lr1cc::Conflict &conflict)
+{
+    output_conflict_point(conflict.start_to_first, "[1]");
+
+    std::cerr << '\n';
+
+    std::cerr << "[1]:";
+    output_actions(conflict.first_state);
+
+    std::cerr << "\n\n";
+}
+
+static void report_conflict(const lr1cc::Conflict &conflict)
+{
+    if (conflict.first_state == conflict.second_state)
+    {
+        report_rr_conflict(conflict);
+    }
+    else
+    {
+        report_sr_conflict(conflict);
+    }
+}
+
+static void report_conflicts(const std::vector<lr1cc::Conflict> &conflicts)
+{
+    for (const lr1cc::Conflict &conflict : conflicts)
+    {
+        report_conflict(conflict);
+    }
 }
 
 static std::vector<lr1cc::Symbol *> calculate_columns(const lr1cc::SymbolManager &manager)
@@ -91,6 +168,20 @@ int main(int argc_, char **argv_)
         auto nfa = lr1cc::grammar_to_nfa(g);
         auto dfa = lr1cc::nfa_to_dfa(nfa);
 
+        auto conflicts = collect_conflicts(dfa);
+
+        if (!conflicts.empty())
+        {
+            std::cerr << conflicts.size()
+                      << (conflicts.size() == 1 ? " conflict" : " conflicts")
+                      << " detected.\n";
+            
+            report_conflicts(conflicts);
+            
+            std::cerr << std::flush;
+            return 1;
+        }
+        
         auto columns = calculate_columns(manager);
 
         lr1cc::output_lr1_table(dfa, columns, out);
