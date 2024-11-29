@@ -85,6 +85,9 @@ int main(int argc_, char **argv_)
         }
         
         auto g = lr1cc::parse_input(in, manager, productions);
+        g.calculate();
+        g.ensure_sanity();
+        
         auto nfa = lr1cc::grammar_to_nfa(g);
         auto dfa = lr1cc::nfa_to_dfa(nfa);
 

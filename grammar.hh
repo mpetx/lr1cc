@@ -26,6 +26,8 @@ namespace lr1cc
 
         void calculate_nullable() const;
         void calculate_first() const;
+
+        void ensure_production_sanity(Production *) const;
         
     public:
 
@@ -47,6 +49,8 @@ namespace lr1cc
         ProductionCatalog &productions();
 
         void calculate() const;
+
+        void ensure_sanity() const;
         
     };
 
