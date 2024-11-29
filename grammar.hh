@@ -32,10 +32,10 @@ namespace lr1cc
         Grammar();
 
         Grammar(const Grammar &) = delete;
-        Grammar(Grammar &&) = delete;
+        Grammar(Grammar &&);
 
         Grammar &operator=(const Grammar &) = delete;
-        Grammar &operator=(Grammar &&) = delete;
+        Grammar &operator=(Grammar &&);
 
         Symbol *start() const;
         void set_start(Symbol *);

@@ -1,6 +1,8 @@
 
 #include "grammar.hh"
 
+#include <utility>
+
 namespace lr1cc
 {
 
@@ -10,6 +12,27 @@ namespace lr1cc
     {
     }
 
+    Grammar::Grammar(Grammar &&g)
+        : m_start { g.m_start },
+          m_end { g.m_end },
+          m_productions { std::move(g.m_productions) }
+    {
+        g.m_start = nullptr;
+        g.m_end = nullptr;
+    }
+
+    Grammar &Grammar::operator=(Grammar &&g)
+    {
+        m_start = g.m_start;
+        m_end = g.m_end;
+        m_productions = std::move(g.m_productions);
+
+        g.m_start = nullptr;
+        g.m_end = nullptr;
+
+        return *this;
+    }
+    
     void Grammar::calculate() const
     {
         calculate_nullable();
