@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(lr1cc-core STATIC
-  symbol.cc grammar.cc nfa.cc dfa.cc conflict.cc output.cc input-lexer.cc)
+  symbol.cc grammar.cc nfa.cc dfa.cc conflict.cc output.cc input-lexer.cc input-parser.cc)
 
 add_executable(lr1cc
   main.cc)

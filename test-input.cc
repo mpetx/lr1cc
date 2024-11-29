@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "input-lexer.hh"
+#include "input-parser.hh"
 
 #include <sstream>
 
@@ -54,4 +55,52 @@ TEST(Lexer, Fundamental)
     expect_next_token(lexer, TokenType::square_end, 4);
 
     expect_next_token(lexer, TokenType::end, 5);
+}
+
+TEST(Parser, Fundamental)
+{
+    std::istringstream in {
+        "%start S\n"
+        "%end end\n"
+        "%terminal x y\n"
+        "%intermediate A B\n"
+        "%grammar\n"
+        "S: A [a]\n"
+        " | B [b]\n"
+        " ;\n"
+        "A: x x [xx] ;\n"
+        "B: y x [yx] ;\n"
+    };
+
+    SymbolManager manager;
+    std::vector<std::unique_ptr<Production>> productions;
+
+    Grammar g = parse_input(in, manager, productions);
+
+    EXPECT_EQ("S", g.start()->name());
+    EXPECT_EQ("end", g.end()->name());
+
+    EXPECT_EQ(4, g.productions().size());
+
+    EXPECT_EQ("a", g.productions().at(0)->name);
+    EXPECT_EQ("S", g.productions().at(0)->lhs->name());
+    EXPECT_EQ(1, g.productions().at(0)->rhs.size());
+    EXPECT_EQ("A", g.productions().at(0)->rhs.at(0)->name());
+
+    EXPECT_EQ("b", g.productions().at(1)->name);
+    EXPECT_EQ("S", g.productions().at(1)->lhs->name());
+    EXPECT_EQ(1, g.productions().at(1)->rhs.size());
+    EXPECT_EQ("B", g.productions().at(1)->rhs.at(0)->name());
+
+    EXPECT_EQ("xx", g.productions().at(2)->name);
+    EXPECT_EQ("A", g.productions().at(2)->lhs->name());
+    EXPECT_EQ(2, g.productions().at(2)->rhs.size());
+    EXPECT_EQ("x", g.productions().at(2)->rhs.at(0)->name());
+    EXPECT_EQ("x", g.productions().at(2)->rhs.at(1)->name());
+    
+    EXPECT_EQ("yx", g.productions().at(3)->name);
+    EXPECT_EQ("B", g.productions().at(3)->lhs->name());
+    EXPECT_EQ(2, g.productions().at(3)->rhs.size());
+    EXPECT_EQ("y", g.productions().at(3)->rhs.at(0)->name());
+    EXPECT_EQ("x", g.productions().at(3)->rhs.at(1)->name());
 }
