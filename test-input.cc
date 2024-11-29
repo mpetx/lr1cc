@@ -1,8 +1,7 @@
 
 #include <gtest/gtest.h>
 
-#include "input-lexer.hh"
-#include "input-parser.hh"
+#include "input.hh"
 
 #include <sstream>
 

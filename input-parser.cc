@@ -1,5 +1,5 @@
 
-#include "input-parser.hh"
+#include "input.hh"
 
 #include <sstream>
 #include <stdexcept>

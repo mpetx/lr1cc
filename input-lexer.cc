@@ -1,5 +1,5 @@
 
-#include "input-lexer.hh"
+#include "input.hh"
 
 #include <cctype>
 #include <iomanip>

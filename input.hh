@@ -1,9 +1,13 @@
-#ifndef LR1CC_INPUT_LEXER_HH
-#define LR1CC_INPUT_LEXER_HH
+#ifndef LR1CC_INCLUDE_INPUT_HH
+#define LR1CC_INCLUDE_INPUT_HH
+
+#include "grammar.hh"
 
 #include <iostream>
 #include <optional>
+#include <memory>
 #include <string>
+#include <vector>
 
 namespace lr1cc
 {
@@ -65,6 +69,8 @@ namespace lr1cc
         void pop();
         
     };
+
+    Grammar parse_input(std::istream &, SymbolManager &, std::vector<std::unique_ptr<Production>> &);
     
     inline std::size_t Lexer::line() const
     {
