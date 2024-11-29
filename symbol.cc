@@ -24,7 +24,7 @@ namespace lr1cc
 
     Symbol *SymbolManager::create_symbol(std::string_view name, SymbolType type)
     {
-        if (name_to_symbol.contains(name))
+        if (m_name_to_symbol.contains(name))
         {
             return nullptr;
         }
@@ -32,18 +32,18 @@ namespace lr1cc
         auto ptr = std::make_unique<Symbol>(name, type);
         auto raw_ptr = ptr.get();
 
-        symbols.push_back(std::move(ptr));
+        m_symbols.push_back(std::move(ptr));
 
-        name_to_symbol.emplace(name, raw_ptr);
+        m_name_to_symbol.emplace(name, raw_ptr);
 
         return raw_ptr;
     }
 
     Symbol *SymbolManager::get_symbol(std::string_view name) const
     {
-        auto iter = name_to_symbol.find(name);
+        auto iter = m_name_to_symbol.find(name);
 
-        if (iter == name_to_symbol.end())
+        if (iter == m_name_to_symbol.end())
         {
             return nullptr;
         }

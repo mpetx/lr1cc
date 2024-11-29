@@ -75,8 +75,8 @@ namespace lr1cc
     class SymbolManager
     {
 
-        std::vector<std::unique_ptr<Symbol>> symbols;
-        std::unordered_map<std::string, Symbol *, StringHash, std::equal_to<>> name_to_symbol;
+        std::vector<std::unique_ptr<Symbol>> m_symbols;
+        std::unordered_map<std::string, Symbol *, StringHash, std::equal_to<>> m_name_to_symbol;
 
     public:
 
@@ -91,6 +91,8 @@ namespace lr1cc
         Symbol *create_symbol(std::string_view, SymbolType);
 
         Symbol *get_symbol(std::string_view) const;
+
+        auto symbols() const;
         
     };
 
@@ -190,6 +192,15 @@ namespace lr1cc
                 break;
             }
         }
+    }
+
+    inline auto SymbolManager::symbols() const
+    {
+        auto raw_pointer = [](const std::unique_ptr<Symbol> &p) {
+            return p.get();
+        };
+        
+        return m_symbols | std::ranges::views::transform(raw_pointer);
     }
     
 }

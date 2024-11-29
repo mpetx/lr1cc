@@ -57,6 +57,13 @@ TEST(SymbolManager, Fundamental)
     EXPECT_EQ(s, manager.get_symbol("S"));
 
     EXPECT_EQ(nullptr, manager.get_symbol("y"));
+
+    std::vector<Symbol *> symbols;
+    for (Symbol *a : manager.symbols())
+    {
+        symbols.push_back(a);
+    }
+    EXPECT_EQ((std::vector { x, s }), symbols);
 }
 
 TEST(Symbols, IsNullable)
