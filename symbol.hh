@@ -1,6 +1,8 @@
 #ifndef LR1CC_INCLUDE_SYMBOL_HH
 #define LR1CC_INCLUDE_SYMBOL_HH
 
+#include "util.hh"
+
 #include <algorithm>
 #include <functional>
 #include <memory>
@@ -63,20 +65,12 @@ namespace lr1cc
     template <typename R>
     requires std::ranges::input_range<std::remove_reference_t<R>>
     std::set<Symbol *> first(R &&, Symbol * = nullptr);
-    
-    struct StringHash
-    {
-        using is_transparent = void;
-        
-        std::size_t operator()(std::string_view) const;
-        std::size_t operator()(const std::string &) const;
-    };
         
     class SymbolManager
     {
 
         std::vector<std::unique_ptr<Symbol>> m_symbols;
-        std::unordered_map<std::string, Symbol *, StringHash, std::equal_to<>> m_name_to_symbol;
+        std::unordered_map<std::string, Symbol *, HeterogeneousStringHash, std::equal_to<>> m_name_to_symbol;
 
     public:
 
@@ -136,16 +130,6 @@ namespace lr1cc
         return m_first;
     }
 
-    inline std::size_t StringHash::operator()(std::string_view sv) const
-    {
-        return std::hash<std::string_view>{}(sv);
-    }
-
-    inline std::size_t StringHash::operator()(const std::string &s) const
-    {
-        return std::hash<std::string_view>{}(s);
-    }
-
     template <typename R>
     requires std::ranges::input_range<std::remove_reference_t<R>>
     bool is_nullable(R &&r)
@@ -177,21 +161,6 @@ namespace lr1cc
         }
 
         return result;
-    }
-    
-    template <typename R, typename Set>
-    requires std::ranges::input_range<std::remove_reference_t<R>>
-    void insert_first(Set &set, R &&r)
-    {
-        for (Symbol *s : r)
-        {
-            set.insert(s->first().cbegin(), s->first().cend());
-
-            if (!s->is_nullable())
-            {
-                break;
-            }
-        }
     }
 
     inline auto SymbolManager::symbols() const

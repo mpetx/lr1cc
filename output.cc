@@ -8,31 +8,6 @@
 namespace lr1cc
 {
 
-    template <typename Func>
-    void for_each_dfa_state(DFAState *state, Func func)
-    {
-        std::unordered_set<DFAState *> visited { state };
-        std::deque<DFAState *> queue;
-        queue.push_back(state);
-
-        while (!queue.empty())
-        {
-            auto s = queue.front();
-            queue.pop_front();
-
-            func(s);
-
-            for (const auto &pair : s->transitions())
-            {
-                if (!visited.contains(pair.second))
-                {
-                    visited.emplace(pair.second);
-                    queue.push_back(pair.second);
-                }
-            }
-        }
-    }
-
     static std::unordered_map<DFAState *, std::size_t> name_states(const DFA &dfa)
     {
         std::unordered_map<DFAState *, std::size_t> state_to_name;

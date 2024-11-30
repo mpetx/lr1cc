@@ -1,7 +1,7 @@
 
 #include "dfa.hh"
+#include "util.hh"
 
-#include <functional>
 #include <unordered_map>
 
 namespace lr1cc
@@ -29,22 +29,7 @@ namespace lr1cc
         return *this;
     }
 
-    struct NFAStateSetHash
-    {
-        std::size_t operator()(const std::set<NFAState *> &states) const
-        {
-            std::size_t h = 0;
-
-            for (NFAState *state : states)
-            {
-                h += std::hash<NFAState *>{}(state);
-            }
-
-            return h;
-        }
-    };
-
-    using DFAStateCatalog = std::unordered_map<std::set<NFAState *>, DFAState *, NFAStateSetHash>;
+    using NFAStatesDFAStateAssociation = std::unordered_map<std::set<NFAState *>, DFAState *, SetHash<NFAState *>>;
     
     static std::set<Symbol *> nfa_states_inputs(const std::set<NFAState *> &nstates)
     {
@@ -63,7 +48,7 @@ namespace lr1cc
         return inputs;
     }
 
-    static DFAState *get_dfa_state(const std::set<NFAState *> &nstates, DFA &dfa, DFAStateCatalog &nfa_to_dfa)
+    static DFAState *get_dfa_state(const std::set<NFAState *> &nstates, DFA &dfa, NFAStatesDFAStateAssociation &nfa_to_dfa)
     {
         auto iter = nfa_to_dfa.find(nstates);
 
@@ -96,7 +81,7 @@ namespace lr1cc
     {
         DFA dfa;
         
-        DFAStateCatalog nfa_to_dfa;
+        NFAStatesDFAStateAssociation nfa_to_dfa;
 
         std::set initial_nstates { nfa.start() };
         epsilon_close(initial_nstates);

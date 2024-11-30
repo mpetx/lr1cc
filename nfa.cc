@@ -1,5 +1,6 @@
 
 #include "nfa.hh"
+#include "util.hh"
 
 #include <algorithm>
 #include <deque>
@@ -112,17 +113,7 @@ namespace lr1cc
         return raw_ptr;
     }
 
-    struct SymbolPairHash
-    {
-        std::size_t operator()(const std::pair<Symbol *, Symbol *> &pair) const
-        {
-            auto h1 = std::hash<Symbol *>{}(pair.first);
-            auto h2 = std::hash<Symbol *>{}(pair.second);
-            return (h1 << 1) + h1 + h2;
-        }
-    };
-
-    using NamedStateCatalog = std::unordered_map<std::pair<Symbol *, Symbol *>, NFAState *, SymbolPairHash>;
+    using NamedStateCatalog = std::unordered_map<std::pair<Symbol *, Symbol *>, NFAState *, PairHash<Symbol *, Symbol *>>;
 
     static auto lhs_is_equal_to_fn(Symbol *lhs)
     {

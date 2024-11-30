@@ -2,42 +2,11 @@
 #include "conflict.hh"
 
 #include <algorithm>
-#include <deque>
 #include <functional>
 #include <ranges>
-#include <unordered_set>
 
 namespace lr1cc
 {
-
-    template <typename Func>
-    void for_each_dfa_state_with_path(DFAState *state, Func func)
-    {
-        std::unordered_set<DFAState *> visited { state };
-        std::deque<std::pair<DFAState *, std::vector<Symbol *>>> queue;
-        queue.push_back(std::pair { state, std::vector<Symbol *> { } });
-
-        while (!queue.empty())
-        {
-            auto [ state, path ] = queue.front();
-            queue.pop_front();
-
-            func(state, path);
-
-            for (const auto &pair : state->transitions())
-            {
-                if (!visited.contains(pair.second))
-                {
-                    visited.emplace(pair.second);
-                    
-                    std::vector new_path { path };
-                    new_path.push_back(pair.first);
-                    
-                    queue.push_back(std::pair { pair.second, new_path });
-                }
-            }
-        }
-    }
 
     static bool has_reduce_reduce_conflict(DFAState *state)
     {

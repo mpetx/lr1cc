@@ -5,10 +5,12 @@
 #include "grammar.hh"
 #include "nfa.hh"
 
+#include <deque>
 #include <map>
 #include <memory>
 #include <ranges>
 #include <type_traits>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -49,6 +51,12 @@ namespace lr1cc
         
     };
 
+    template <typename Func>
+    void for_each_dfa_state(DFAState *state, Func func);
+
+    template <typename Func>
+    void for_each_dfa_state_with_path(DFAState *state, Func func);
+    
     class DFA
     {
 
@@ -187,6 +195,60 @@ namespace lr1cc
         }
 
         return state;
+    }
+
+    template <typename Func>
+    void for_each_dfa_state(DFAState *state, Func func)
+    {
+        std::unordered_set<DFAState *> visited { state };
+        std::deque<DFAState *> queue;
+        queue.push_back(state);
+
+        while (!queue.empty())
+        {
+            auto s = queue.front();
+            queue.pop_front();
+
+            func(s);
+
+            for (const auto &pair : s->transitions())
+            {
+                if (!visited.contains(pair.second))
+                {
+                    visited.emplace(pair.second);
+                    queue.push_back(pair.second);
+                }
+            }
+        }
+    }
+
+    template <typename Func>
+    void for_each_dfa_state_with_path(DFAState *state, Func func)
+    {
+        std::unordered_set<DFAState *> visited { state };
+        std::deque<std::pair<DFAState *, std::vector<Symbol *>>> queue;
+        queue.push_back(std::pair { state, std::vector<Symbol *> { } });
+
+        while (!queue.empty())
+        {
+            auto [ state, path ] = queue.front();
+            queue.pop_front();
+
+            func(state, path);
+
+            for (const auto &pair : state->transitions())
+            {
+                if (!visited.contains(pair.second))
+                {
+                    visited.emplace(pair.second);
+                    
+                    std::vector new_path { path };
+                    new_path.push_back(pair.first);
+                    
+                    queue.push_back(std::pair { pair.second, new_path });
+                }
+            }
+        }
     }
     
 }

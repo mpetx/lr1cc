@@ -27,13 +27,13 @@ namespace lr1cc
 
     class NFAState;
 
-    using TransitionCatalog = std::map<Symbol *, std::set<NFAState *>>;
+    using NFATransitionCatalog = std::map<Symbol *, std::set<NFAState *>>;
     
     class NFAState
     {
 
         Acceptance m_acceptance;
-        TransitionCatalog m_transitions;
+        NFATransitionCatalog m_transitions;
 
     public:
 
@@ -47,8 +47,8 @@ namespace lr1cc
 
         const Acceptance &acceptance() const;
 
-        const TransitionCatalog &transitions() const;
-        TransitionCatalog &transitions();
+        const NFATransitionCatalog &transitions() const;
+        NFATransitionCatalog &transitions();
 
         void add_transition(Symbol *, NFAState *);
         
@@ -91,12 +91,12 @@ namespace lr1cc
         return m_acceptance;
     }
 
-    inline const TransitionCatalog &NFAState::transitions() const
+    inline const NFATransitionCatalog &NFAState::transitions() const
     {
         return m_transitions;
     }
     
-    inline TransitionCatalog &NFAState::transitions()
+    inline NFATransitionCatalog &NFAState::transitions()
     {
         return m_transitions;
     }
