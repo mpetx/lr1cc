@@ -35,7 +35,7 @@
 | 還元 | `Rproduction-name` |
 | シフト | `Sstate-name` |
 | GOTO | `Gstate-name` |
-| 拒否 | `` |
+| 拒否 | 空文字列 |
 
 ## 構文解析アルゴリズム
 

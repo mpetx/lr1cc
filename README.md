@@ -20,4 +20,4 @@ lr1cc [-o outfile] [-h] infile
 
 入力ファイルの仕様については [grammar-def.md](/doc/grammar-def.md) を参照してください。
 
-出力ファイルの使用については [parsing-table.md](/doc/parsing-table.md) を参照してください。
+出力ファイルの仕様については [parsing-table.md](/doc/parsing-table.md) を参照してください。
