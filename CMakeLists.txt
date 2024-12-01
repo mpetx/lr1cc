@@ -26,7 +26,7 @@ endif()
 if (${GTest_FOUND} AND ${BUILD_TESTS})
 
   add_executable(test-lr1cc
-    test-symbol.cc test-grammar.cc test-nfa.cc test-grammar-to-nfa.cc test-dfa.cc test-conflict.cc test-output.cc test-input.cc test-cli.cc)
+    test-symbol.cc test-grammar.cc test-nfa.cc test-dfa.cc test-automaton.cc test-conflict.cc test-output.cc test-input.cc test-cli.cc)
 
   target_link_libraries(test-lr1cc
     PRIVATE lr1cc-core GTest::gtest_main)
