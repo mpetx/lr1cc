@@ -1,0 +1,37 @@
+
+%start AddExpr
+
+%end end
+
+%terminal
+   number ident sparen eparen
+   plus minus mul div
+
+%intermediate
+   MulExpr UnaryExpr PrimaryExpr
+
+%grammar
+
+AddExpr:
+   AddExpr plus MulExpr  [addition]
+ | AddExpr minus MulExpr [subtraction]
+ | MulExpr               [sole-mul-expr]
+ ;
+
+MulExpr:
+   MulExpr mul UnaryExpr [multiplication]
+ | MulExpr div UnaryExpr [division]
+ | UnaryExpr             [sole-unary-expr]
+ ;
+
+UnaryExpr:
+   plus UnaryExpr  [position]
+ | minus UnaryExpr [negation]
+ | PrimaryExpr     [sole-primary-expr]
+ ;
+
+PrimaryExpr:
+   number                [number]
+ | ident                 [variable]
+ | sparen AddExpr eparen [subexpr]
+ ;

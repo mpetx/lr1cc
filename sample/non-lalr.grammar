@@ -1,0 +1,19 @@
+
+%start S
+
+%end end
+
+%terminal a b c d e
+
+%intermediate X Y
+
+%grammar
+
+S: a X c [axc]
+ | a Y d [ayd]
+ | b Y c [byc]
+ | b X d [bxd]
+ ;
+
+X: e [x] ;
+Y: e [y] ;

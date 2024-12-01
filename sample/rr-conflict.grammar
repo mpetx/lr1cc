@@ -1,0 +1,17 @@
+
+%start S
+
+%end end
+
+%terminal a b
+
+%intermediate X Y
+
+%grammar
+
+S: X a b [aab]
+ | Y a a [aaa]
+ ;
+
+X: a [x] ;
+Y: a [y] ;

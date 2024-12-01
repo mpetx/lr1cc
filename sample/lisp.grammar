@@ -1,0 +1,46 @@
+
+%start Exprs
+
+%end end
+
+%terminal
+   symbol integer float character string
+   sparen eparen dot
+   quote quasiquote unquote unquote-splicing sharp-quote
+   sharp-sparen sharp-a
+   sharp-b sharp-o sharp-x
+
+%intermediate
+   Expr ListTail
+
+%grammar
+
+Exprs:
+   Exprs Expr [some-exprs]
+ |            [no-exprs]
+ ;
+
+Expr:
+   symbol                            [symbol-expr]
+ | integer                           [dec-integer-expr]
+ | sharp-b integer                   [bin-integer-expr]
+ | sharp-o integer                   [oct-integer-expr]
+ | sharp-x integer                   [hex-integer-expr]
+ | float                             [float-expr]
+ | character                         [character-expr]
+ | string                            [string-expr]
+ | sparen eparen                     [nil-expr]
+ | sparen Expr Exprs ListTail eparen [list-expr]
+ | sharp-sparen Exprs eparen         [vector-expr]
+ | sharp-a Expr                      [array-expr]
+ | quote Expr                        [quote-expr]
+ | quasiquote Expr                   [quasiquote-expr]
+ | unquote Expr                      [unquote-expr]
+ | unquote-splicing Expr             [unquote-splicing-expr]
+ | sharp-quote Expr                  [function-expr]
+ ;
+
+ListTail:
+   dot Expr [improper-list-tail]
+ |          [proper-list-tail]
+ ;
